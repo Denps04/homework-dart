@@ -1,0 +1,245 @@
+// 반복문 없이 X 그리기
+void main() {
+  print("#   #");
+  print(" # # ");
+  print("  #  ");
+  print(" # # ");
+  print("#   #");
+}
+
+// 반복문 + 조건문으로 X자 그리기
+
+void main() {
+  const int n = 9; // 홀수 권장. 짝수도 동작하지만 중앙선이 2줄이 됩니다.
+  for (int r = 0; r < n; r++) {
+    final buffer = StringBuffer();
+    for (int c = 0; c < n; c++) {
+      if (c == r || c == n - 1 - r) {
+        buffer.write('#');
+      } else {
+        buffer.write(' ');
+      }
+    }
+    print(buffer.toString());
+  }
+}
+
+// 정사각형 격자 포함 X자 그리기
+
+void main() {
+  const int n = 7; // 격자 크기(n×n)
+  final cellW = 1; // 셀 내부 가로 문자 길이
+  final cellH = 1; // 셀 내부 세로 문자 길이
+
+  // 위쪽 테두리
+  print(_hLine(n, cellW));
+
+  for (int r = 0; r < n; r++) {
+    // 셀 내부 세로(cellH)만큼 출력
+    for (int h = 0; h < cellH; h++) {
+      final row = StringBuffer();
+      row.write('|');
+      for (int c = 0; c < n; c++) {
+        // 대각선이면 '#', 아니면 공백
+        final ch = (c == r || c == n - 1 - r) ? '#' : ' ';
+        row.write(List.filled(cellW, ch).join());
+        row.write('|');
+      }
+      print(row.toString());
+    }
+    // 가로 경계선
+    print(_hLine(n, cellW));
+  }
+}
+
+String _hLine(int n, int cellW) {
+  final sb = StringBuffer();
+  sb.write('+');
+  for (int i = 0; i < n; i++) {
+    sb.write(List.filled(cellW, '-').join());
+    sb.write('+');
+  }
+  return sb.toString();
+}
+
+// Flutter 실습
+
+import 'package:flutter/material.dart';
+
+void main() => runApp(const MyApp());
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'Flutter 실습',
+      home: Scaffold(
+        appBar: AppBar(title: const Text('Container / Column / Row / Expanded')),
+        body: const SingleChildScrollView(
+          padding: EdgeInsets.all(16),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              SectionTitle('1) 100×100 파란 Container'),
+              BlueBox100(),
+              SizedBox(height: 24),
+
+              SectionTitle('2) 이등분 영역에 빨강·노랑 정사각형 (Expanded 활용)'),
+              TwoSquaresDemo(),
+              SizedBox(height: 24),
+
+              SectionTitle('3) 함수로 분리하여 Column/Row 여러 개 출력'),
+              FunctionDemo(),
+              SizedBox(height: 24),
+
+              SectionTitle('4) StatelessWidget으로 분리하여 Column/Row 여러 개 출력'),
+              WidgetDemo(),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class SectionTitle extends StatelessWidget {
+  final String text;
+  const SectionTitle(this.text, {super.key});
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 8),
+      child: Text(text, style: Theme.of(context).textTheme.titleMedium),
+    );
+  }
+}
+
+// 100×100 파란 Container
+class BlueBox100 extends StatelessWidget {
+  const BlueBox100({super.key});
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Container(width: 100, height: 100, color: Colors.blue),
+    );
+  }
+}
+
+// 이등분 영역에 각각 50×50 정사각형(빨강/노랑)을 배치
+
+class TwoSquaresDemo extends StatelessWidget {
+  const TwoSquaresDemo({super.key});
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Container(
+        width: 100,
+        height: 100,
+        color: Colors.grey.shade200,
+        child: Column(
+          children: [
+            Expanded(
+              child: Center(
+                child: Container(width: 50, height: 50, color: Colors.red),
+              ),
+            ),
+            Expanded(
+              child: Center(
+                child: Container(width: 50, height: 50, color: Colors.yellow),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+// 함수로 분리해서 Column/Row를 이용해 여러 개 출력
+
+Widget buildTwoSquaresAxis({required Axis axis}) {
+  final squares = [
+    Expanded(
+      child: Center(child: Container(width: 50, height: 50, color: Colors.red)),
+    ),
+    Expanded(
+      child:
+          Center(child: Container(width: 50, height: 50, color: Colors.yellow)),
+    ),
+  ];
+  final child = axis == Axis.vertical
+      ? Column(children: squares)
+      : Row(children: squares);
+
+  return Container(
+    width: axis == Axis.vertical ? 100 : 200,
+    height: axis == Axis.vertical ? 200 : 100,
+    color: Colors.black12,
+    child: child,
+  );
+}
+
+class FunctionDemo extends StatelessWidget {
+  const FunctionDemo({super.key});
+  @override
+  Widget build(BuildContext context) {
+    return Wrap(
+      spacing: 16,
+      runSpacing: 16,
+      children: [
+        buildTwoSquaresAxis(axis: Axis.vertical),   // Column 버전
+        buildTwoSquaresAxis(axis: Axis.horizontal), // Row 버전
+        buildTwoSquaresAxis(axis: Axis.vertical),
+        buildTwoSquaresAxis(axis: Axis.horizontal),
+      ],
+    );
+  }
+}
+
+/// 4) StatelessWidget으로 분리해서 여러 개 출력
+class TwoSquaresAxis extends StatelessWidget {
+  final Axis axis;
+  const TwoSquaresAxis({super.key, required this.axis});
+
+  @override
+  Widget build(BuildContext context) {
+    final squares = [
+      const Expanded(
+        child: Center(child: ColoredBox(color: Colors.red, child: SizedBox.square(dimension: 50))),
+      ),
+      const Expanded(
+        child: Center(child: ColoredBox(color: Colors.yellow, child: SizedBox.square(dimension: 50))),
+      ),
+    ];
+
+    final child =
+        axis == Axis.vertical ? Column(children: squares) : Row(children: squares);
+
+    return Container(
+      width: axis == Axis.vertical ? 100 : 200,
+      height: axis == Axis.vertical ? 200 : 100,
+      color: Colors.black12,
+      child: child,
+    );
+  }
+}
+
+class WidgetDemo extends StatelessWidget {
+  const WidgetDemo({super.key});
+  @override
+  Widget build(BuildContext context) {
+    return Wrap(
+      spacing: 16,
+      runSpacing: 16,
+      children: const [
+        TwoSquaresAxis(axis: Axis.vertical),
+        TwoSquaresAxis(axis: Axis.horizontal),
+        TwoSquaresAxis(axis: Axis.vertical),
+        TwoSquaresAxis(axis: Axis.horizontal),
+      ],
+    );
+  }
+}
+
