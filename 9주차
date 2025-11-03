@@ -1,1 +1,96 @@
+//상자 3개를 세로로 배치
+
+import 'package:flutter/material.dart';
+
+void main() => runApp(MyBoxApp());
+
+class MyBoxApp extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      home: Scaffold(
+        backgroundColor: Colors.black,
+        body: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Container(width: 100, height: 100, color: Colors.red),
+              SizedBox(height: 10),
+              Container(width: 100, height: 100, color: Colors.green),
+              SizedBox(height: 10),
+              Container(width: 100, height: 100, color: Colors.blue),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+
+//가로로 상자 3개 배치
+
+import 'package:flutter/material.dart';
+
+void main() => runApp(MyRowBoxApp());
+
+class MyRowBoxApp extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      home: Scaffold(
+        backgroundColor: Colors.black,
+        body: Center(
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Container(width: 100, height: 100, color: Colors.orange),
+              SizedBox(width: 10),
+              Container(width: 100, height: 100, color: Colors.purple),
+              SizedBox(width: 10),
+              Container(width: 100, height: 100, color: Colors.cyan),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+
+//X 모양으로 상자 배치
+
+import 'package:flutter/material.dart';
+
+void main() => runApp(MyXApp());
+
+class MyXApp extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      home: Scaffold(
+        backgroundColor: Colors.black,
+        body: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: List.generate(5, (i) {
+              return Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: List.generate(5, (j) {
+                  bool isX = (i == j) || (i + j == 4);
+                  return Container(
+                    width: 40,
+                    height: 40,
+                    margin: EdgeInsets.all(2),
+                    color: isX ? Colors.white : Colors.grey[800],
+                  );
+                }),
+              );
+            }),
+          ),
+        ),
+      ),
+    );
+  }
+}
 
